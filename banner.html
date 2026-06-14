@@ -40,7 +40,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: clamp(8px, 2vw, 12px) clamp(10px, 3vw, 16px);
+        padding: clamp(5px, 1.2vw, 7px) clamp(10px, 3vw, 16px);
         background: linear-gradient(90deg, #1a1f3a, #0a0d1f);
         border-bottom: 1px solid rgba(230, 212, 160, 0.3);
       }
@@ -92,10 +92,10 @@
 
       .bet-row {
         display: grid;
-        grid-template-columns: clamp(26px, 6vw, 32px) 1fr 1fr auto;
+        grid-template-columns: 1fr 1fr auto;
         align-items: center;
         gap: clamp(8px, 2vw, 12px);
-        padding: clamp(7px, 2vw, 10px) clamp(10px, 3vw, 16px);
+        padding: clamp(4px, 1.2vw, 6px) clamp(10px, 3vw, 16px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         animation: slideIn 0.5s ease;
       }
@@ -115,19 +115,6 @@
           transform: translateY(0);
           background: transparent;
         }
-      }
-
-      .avatar {
-        width: clamp(26px, 6vw, 30px);
-        height: clamp(26px, 6vw, 30px);
-        border-radius: 50%;
-        background: linear-gradient(135deg, #e6d4a0, #8a6f3b);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: clamp(11px, 2.5vw, 13px);
-        font-weight: 700;
-        color: #0a0d1f;
       }
 
       .username {
@@ -156,7 +143,7 @@
 
       @media (max-width: 380px) {
         .bet-row {
-          grid-template-columns: 26px 1fr auto;
+          grid-template-columns: 1fr auto;
         }
         .game {
           display: none;
@@ -180,7 +167,7 @@
       const CURRENCY = "₺";
       const MIN_DELAY = 1500;
       const MAX_DELAY = 4000;
-      const ROW_HEIGHT = 50;
+      const ROW_HEIGHT = 32;
 
       let MAX_ROWS = 8;
 
@@ -244,7 +231,6 @@
         const amount = (Math.random() * 990 + 10).toFixed(2);
         return {
           username: maskUsername(name),
-          initial: name[0].toUpperCase(),
           game: game,
           amount: amount,
         };
@@ -255,7 +241,6 @@
         const row = document.createElement("div");
         row.className = "bet-row";
         row.innerHTML = `
-      <div class="avatar">${bet.initial}</div>
       <div class="username">${bet.username}</div>
       <div class="game">${bet.game}</div>
       <div class="amount">${CURRENCY}${bet.amount}</div>
