@@ -25,14 +25,66 @@
       }
 
       .feed {
-        background: #11142a;
-        border: 1px solid rgba(230, 212, 160, 0.2);
+        position: relative;
+        background:
+          radial-gradient(
+            ellipse at top,
+            rgba(230, 212, 160, 0.12) 0%,
+            transparent 65%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(74, 222, 128, 0.05) 0%,
+            transparent 50%
+          ),
+          #11142a;
+        border: 1px solid rgba(230, 212, 160, 0.3);
         border-radius: 12px;
         overflow: hidden;
         width: 100%;
         height: 100%;
         display: flex;
         flex-direction: column;
+        box-shadow:
+          inset 0 1px 0 rgba(230, 212, 160, 0.15),
+          0 0 24px rgba(230, 212, 160, 0.06);
+      }
+
+      .feed::before,
+      .feed::after {
+        content: "";
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(230, 212, 160, 0.18) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        animation: sparkle 4s ease-in-out infinite;
+      }
+      .feed::before {
+        top: -30px;
+        left: -30px;
+      }
+      .feed::after {
+        top: -30px;
+        right: -30px;
+        animation-delay: 2s;
+      }
+
+      @keyframes sparkle {
+        0%,
+        100% {
+          opacity: 0.4;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.15);
+        }
       }
 
       .feed-header {
@@ -40,17 +92,48 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: clamp(5px, 1.2vw, 7px) clamp(10px, 3vw, 16px);
-        background: linear-gradient(90deg, #1a1f3a, #0a0d1f);
+        padding: clamp(6px, 1.4vw, 9px) clamp(10px, 3vw, 16px);
+        background: linear-gradient(
+          90deg,
+          #1a1f3a 0%,
+          #0a0d1f 50%,
+          #1a1f3a 100%
+        );
         border-bottom: 1px solid rgba(230, 212, 160, 0.3);
+        position: relative;
+        z-index: 2;
       }
 
       .feed-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         font-size: clamp(11px, 2.5vw, 13px);
         font-weight: 700;
         letter-spacing: 1.5px;
         color: #e6d4a0;
         text-transform: uppercase;
+        text-shadow: 0 0 8px rgba(230, 212, 160, 0.4);
+      }
+
+      .crown-icon {
+        width: 18px;
+        height: 18px;
+        color: #e6d4a0;
+        fill: #e6d4a0;
+        filter: drop-shadow(0 0 6px rgba(230, 212, 160, 0.7));
+        animation: glow 2.5s ease-in-out infinite;
+        flex-shrink: 0;
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 4px rgba(230, 212, 160, 0.5));
+        }
+        50% {
+          filter: drop-shadow(0 0 10px rgba(230, 212, 160, 0.9));
+        }
       }
 
       .live-indicator {
@@ -88,6 +171,8 @@
         flex: 1;
         overflow: hidden;
         min-height: 0;
+        position: relative;
+        z-index: 1;
       }
 
       .win-row {
@@ -108,7 +193,7 @@
         from {
           opacity: 0;
           transform: translateY(-12px);
-          background: rgba(230, 212, 160, 0.12);
+          background: rgba(230, 212, 160, 0.15);
         }
         to {
           opacity: 1;
@@ -136,9 +221,10 @@
 
       .amount {
         font-size: clamp(12px, 3.2vw, 12px);
-        font-weight: 500;
+        font-weight: 600;
         color: #4ade80;
         white-space: nowrap;
+        text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
       }
 
       @media (max-width: 380px) {
@@ -154,7 +240,16 @@
   <body>
     <div class="feed">
       <div class="feed-header">
-        <div class="feed-title">Live Wins</div>
+        <div class="feed-title">
+          <svg
+            class="crown-icon"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm0 2h14v2H5v-2z" />
+          </svg>
+          Live Wins
+        </div>
         <div class="live-indicator">
           <div class="live-dot"></div>
           <span>LIVE</span>
@@ -167,11 +262,11 @@
       const CURRENCY = "₺";
       const MIN_DELAY = 1500;
       const MAX_DELAY = 4000;
-      const ROW_HEIGHT = 36;
       const MIN_WIN = 5000;
       const MAX_WIN = 60000;
+      const INITIAL_ROWS = 30;
 
-      let MAX_ROWS = 8;
+      let MAX_ROWS = INITIAL_ROWS;
 
       const sampleUsernames = [
         "Maximus",
@@ -199,6 +294,11 @@
         "BlackJack",
         "RedSeven",
         "WildCard",
+        "TopBet",
+        "FireSpin",
+        "DiamondKing",
+        "AcePlayer",
+        "MoonShot",
       ];
 
       const sampleGames = [
@@ -244,29 +344,39 @@
         };
       }
 
-      function addWin(win) {
-        const list = document.getElementById("feed-list");
+      function createRowElement(win, animate = true) {
         const row = document.createElement("div");
         row.className = "win-row";
+        if (!animate) row.style.animation = "none";
         row.innerHTML = `
       <div class="username">${win.username}</div>
       <div class="game">${win.game}</div>
       <div class="amount">${CURRENCY}${win.amount}</div>
     `;
-        list.prepend(row);
-        while (list.children.length > MAX_ROWS) {
-          list.removeChild(list.lastChild);
+        return row;
+      }
+
+      function initialFill() {
+        const list = document.getElementById("feed-list");
+        list.innerHTML = "";
+
+        // Preload 30 random wins
+        for (let i = 0; i < INITIAL_ROWS; i++) {
+          list.appendChild(createRowElement(generateRandomWin(), false));
         }
+
+        // If the screen is even taller and there's still empty space, keep adding
+        let safety = 60;
+        while (list.scrollHeight < list.clientHeight - 4 && safety-- > 0) {
+          list.appendChild(createRowElement(generateRandomWin(), false));
+        }
+
+        MAX_ROWS = list.children.length;
       }
 
-      function calculateMaxRows() {
+      function addWin(win) {
         const list = document.getElementById("feed-list");
-        const h = list.clientHeight;
-        MAX_ROWS = Math.max(3, Math.floor(h / ROW_HEIGHT));
-      }
-
-      function trimList() {
-        const list = document.getElementById("feed-list");
+        list.prepend(createRowElement(win, true));
         while (list.children.length > MAX_ROWS) {
           list.removeChild(list.lastChild);
         }
@@ -281,14 +391,14 @@
       }
 
       window.addEventListener("load", () => {
-        calculateMaxRows();
-        for (let i = 0; i < MAX_ROWS; i++) addWin(generateRandomWin());
+        initialFill();
         scheduleNextWin();
       });
 
+      let resizeTimeout;
       window.addEventListener("resize", () => {
-        calculateMaxRows();
-        trimList();
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(initialFill, 200);
       });
     </script>
   </body>
