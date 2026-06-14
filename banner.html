@@ -30,11 +30,13 @@
         border-radius: 12px;
         overflow: hidden;
         width: 100%;
-        max-width: 500px;
-        margin: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
       }
 
       .feed-header {
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -83,7 +85,9 @@
       }
 
       .feed-list {
+        flex: 1;
         overflow: hidden;
+        min-height: 0;
       }
 
       .bet-row {
@@ -150,7 +154,6 @@
         white-space: nowrap;
       }
 
-      /* On very narrow screens, hide the game column so name + amount stay readable */
       @media (max-width: 380px) {
         .bet-row {
           grid-template-columns: 26px 1fr auto;
@@ -175,10 +178,11 @@
 
     <script>
       const CURRENCY = "₺";
-      // Fewer rows on small screens so it doesn't overflow the iframe
-      const MAX_ROWS = window.innerWidth < 480 ? 8 : 12;
       const MIN_DELAY = 1500;
       const MAX_DELAY = 4000;
+      const ROW_HEIGHT = 50;
+
+      let MAX_ROWS = 8;
 
       const sampleUsernames = [
         "Maximus",
@@ -238,7 +242,6 @@
         const game =
           sampleGames[Math.floor(Math.random() * sampleGames.length)];
         const amount = (Math.random() * 990 + 10).toFixed(2);
-
         return {
           username: maskUsername(name),
           initial: name[0].toUpperCase(),
@@ -258,13 +261,23 @@
       <div class="amount">${CURRENCY}${bet.amount}</div>
     `;
         list.prepend(row);
-
         while (list.children.length > MAX_ROWS) {
           list.removeChild(list.lastChild);
         }
       }
 
-      for (let i = 0; i < MAX_ROWS; i++) addBet(generateRandomBet());
+      function calculateMaxRows() {
+        const list = document.getElementById("feed-list");
+        const h = list.clientHeight;
+        MAX_ROWS = Math.max(3, Math.floor(h / ROW_HEIGHT));
+      }
+
+      function trimList() {
+        const list = document.getElementById("feed-list");
+        while (list.children.length > MAX_ROWS) {
+          list.removeChild(list.lastChild);
+        }
+      }
 
       function scheduleNextBet() {
         const delay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
@@ -273,7 +286,17 @@
           scheduleNextBet();
         }, delay);
       }
-      scheduleNextBet();
+
+      window.addEventListener("load", () => {
+        calculateMaxRows();
+        for (let i = 0; i < MAX_ROWS; i++) addBet(generateRandomBet());
+        scheduleNextBet();
+      });
+
+      window.addEventListener("resize", () => {
+        calculateMaxRows();
+        trimList();
+      });
     </script>
   </body>
 </html>
