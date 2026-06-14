@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Live Bets Feed</title>
+    <title>Live Wins Feed</title>
     <style>
       * {
         box-sizing: border-box;
@@ -90,7 +90,7 @@
         min-height: 0;
       }
 
-      .bet-row {
+      .win-row {
         display: grid;
         grid-template-columns: 1fr 1fr auto;
         align-items: center;
@@ -100,7 +100,7 @@
         animation: slideIn 0.5s ease;
       }
 
-      .bet-row:last-child {
+      .win-row:last-child {
         border-bottom: none;
       }
 
@@ -135,14 +135,14 @@
       }
 
       .amount {
-        font-size: clamp(11px, 2.5vw, 13px);
+        font-size: clamp(14px, 3.2vw, 17px);
         font-weight: 700;
         color: #4ade80;
         white-space: nowrap;
       }
 
       @media (max-width: 380px) {
-        .bet-row {
+        .win-row {
           grid-template-columns: 1fr auto;
         }
         .game {
@@ -154,7 +154,7 @@
   <body>
     <div class="feed">
       <div class="feed-header">
-        <div class="feed-title">Live Bets</div>
+        <div class="feed-title">Live Wins</div>
         <div class="live-indicator">
           <div class="live-dot"></div>
           <span>LIVE</span>
@@ -167,7 +167,9 @@
       const CURRENCY = "₺";
       const MIN_DELAY = 1500;
       const MAX_DELAY = 4000;
-      const ROW_HEIGHT = 32;
+      const ROW_HEIGHT = 36;
+      const MIN_WIN = 5000;
+      const MAX_WIN = 60000;
 
       let MAX_ROWS = 8;
 
@@ -223,12 +225,18 @@
         return name.slice(0, 2) + "******";
       }
 
-      function generateRandomBet() {
+      function generateRandomWin() {
         const name =
           sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
         const game =
           sampleGames[Math.floor(Math.random() * sampleGames.length)];
-        const amount = (Math.random() * 990 + 10).toFixed(2);
+        const amount = (
+          Math.random() * (MAX_WIN - MIN_WIN) +
+          MIN_WIN
+        ).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
         return {
           username: maskUsername(name),
           game: game,
@@ -236,14 +244,14 @@
         };
       }
 
-      function addBet(bet) {
+      function addWin(win) {
         const list = document.getElementById("feed-list");
         const row = document.createElement("div");
-        row.className = "bet-row";
+        row.className = "win-row";
         row.innerHTML = `
-      <div class="username">${bet.username}</div>
-      <div class="game">${bet.game}</div>
-      <div class="amount">${CURRENCY}${bet.amount}</div>
+      <div class="username">${win.username}</div>
+      <div class="game">${win.game}</div>
+      <div class="amount">${CURRENCY}${win.amount}</div>
     `;
         list.prepend(row);
         while (list.children.length > MAX_ROWS) {
@@ -264,18 +272,18 @@
         }
       }
 
-      function scheduleNextBet() {
+      function scheduleNextWin() {
         const delay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
         setTimeout(() => {
-          addBet(generateRandomBet());
-          scheduleNextBet();
+          addWin(generateRandomWin());
+          scheduleNextWin();
         }, delay);
       }
 
       window.addEventListener("load", () => {
         calculateMaxRows();
-        for (let i = 0; i < MAX_ROWS; i++) addBet(generateRandomBet());
-        scheduleNextBet();
+        for (let i = 0; i < MAX_ROWS; i++) addWin(generateRandomWin());
+        scheduleNextWin();
       });
 
       window.addEventListener("resize", () => {
