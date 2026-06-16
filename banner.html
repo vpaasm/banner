@@ -323,9 +323,9 @@
           sampleGames[Math.floor(Math.random() * sampleGames.length)];
         const bet = betAmounts[Math.floor(Math.random() * betAmounts.length)];
 
-        // ~55% of spins return nothing (loss)
+        // ~25% of spins return nothing (loss)
         let multiplier;
-        if (Math.random() < 0.55) {
+        if (Math.random() < 0.25) {
           multiplier = 0;
         } else {
           // weighted toward small multipliers, occasional big hit
