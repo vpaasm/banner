@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaderboard</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: transparent;
+        color: #fff;
+      }
+
+      .board {
+        position: relative;
+        background:
+          radial-gradient(
+            ellipse at top,
+            rgba(216, 166, 95, 0.1) 0%,
+            transparent 60%
+          ),
+          #050b2e;
+        border: 1px solid #d8a65f;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow:
+          inset 0 1px 0 rgba(216, 166, 95, 0.12),
+          0 0 24px rgba(0, 0, 0, 0.25);
+      }
+
+      /* ---------- Header ---------- */
+      .board-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: clamp(10px, 2vw, 14px) clamp(12px, 3vw, 18px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .board-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: clamp(12px, 2.8vw, 15px);
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        color: #d8a65f;
+        text-transform: uppercase;
+      }
+
+      .board-title svg {
+        width: 14px;
+        height: 14px;
+        stroke: #d8a65f;
+        opacity: 0.7;
+      }
+
+      .daily-pill {
+        font-size: clamp(11px, 2.4vw, 13px);
+        font-weight: 600;
+        color: #d8a65f;
+        background: rgba(216, 166, 95, 0.08);
+        border: 1px solid #d8a65f;
+        border-radius: 999px;
+        padding: clamp(4px, 1vw, 6px) clamp(12px, 3vw, 18px);
+      }
+
+      /* ---------- Prizepool ---------- */
+      .prizepool {
+        text-align: center;
+        padding: clamp(14px, 3vw, 22px) 0 clamp(8px, 2vw, 12px);
+      }
+
+      .prizepool .label {
+        font-size: clamp(10px, 2.2vw, 12px);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #8a8fad;
+        margin-bottom: 6px;
+      }
+
+      .prizepool .amount {
+        font-size: clamp(26px, 7vw, 38px);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: #d8a65f;
+        text-shadow: 0 0 18px rgba(216, 166, 95, 0.35);
+      }
+
+      /* ---------- Countdown ---------- */
+      .countdown {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: clamp(6px, 1.6vw, 10px);
+        padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px) clamp(14px, 3vw, 20px);
+      }
+
+      .cd-box {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(216, 166, 95, 0.25);
+        border-radius: 10px;
+        padding: clamp(8px, 2vw, 14px) 4px;
+        text-align: center;
+      }
+
+      .cd-num {
+        font-size: clamp(20px, 5.5vw, 30px);
+        font-weight: 800;
+        color: #d8a65f;
+        line-height: 1;
+        text-shadow: 0 0 12px rgba(216, 166, 95, 0.3);
+      }
+
+      .cd-label {
+        margin-top: 6px;
+        font-size: clamp(9px, 2vw, 11px);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #8a8fad;
+      }
+
+      /* ---------- List ---------- */
+      .list {
+        display: flex;
+        flex-direction: column;
+        padding: 0 clamp(8px, 2vw, 12px);
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: clamp(34px, 9vw, 46px) 1.2fr 1fr auto;
+        align-items: center;
+        gap: clamp(6px, 1.6vw, 12px);
+        padding: clamp(7px, 1.6vw, 10px) clamp(6px, 1.5vw, 10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .row.top {
+        background: rgba(216, 166, 95, 0.08);
+        border-radius: 8px;
+        border-bottom: 1px solid rgba(216, 166, 95, 0.18);
+        margin-bottom: 2px;
+      }
+
+      .rank {
+        font-size: clamp(13px, 3vw, 17px);
+        font-weight: 800;
+        color: #fff;
+      }
+      .row.top .rank {
+        color: #d8a65f;
+        text-shadow: 0 0 10px rgba(216, 166, 95, 0.4);
+      }
+
+      .cell-label {
+        font-size: clamp(8px, 1.8vw, 10px);
+        font-weight: 500;
+        color: #6f7894;
+        margin-bottom: 2px;
+      }
+
+      .cell-value {
+        font-size: clamp(11px, 2.5vw, 13px);
+        font-weight: 700;
+        color: #e8ebf5;
+        white-space: nowrap;
+      }
+
+      .col-user .cell-value {
+        color: #d8a65f;
+      }
+
+      .col-prize {
+        text-align: right;
+      }
+      .col-prize .cell-label {
+        text-align: right;
+      }
+      .col-prize .cell-value {
+        color: #4ade80;
+      }
+
+      /* ---------- Pagination ---------- */
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(4px, 1.4vw, 8px);
+        padding: clamp(12px, 3vw, 18px);
+      }
+
+      .page-btn {
+        min-width: clamp(26px, 7vw, 32px);
+        height: clamp(26px, 7vw, 32px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(11px, 2.4vw, 13px);
+        font-weight: 600;
+        color: #c7cce0;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.15s ease;
+      }
+
+      .page-btn:hover {
+        border-color: rgba(216, 166, 95, 0.5);
+        color: #fff;
+      }
+
+      .page-btn.active {
+        background: rgba(216, 166, 95, 0.12);
+        border-color: #d8a65f;
+        color: #d8a65f;
+      }
+
+      .page-btn.arrow {
+        font-size: clamp(13px, 3vw, 16px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <div class="board-header">
+        <div class="board-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+          Leaderboard
+        </div>
+        <div class="daily-pill">Daily</div>
+      </div>
+
+      <div class="prizepool">
+        <div class="label">Prizepool</div>
+        <div class="amount">5,000 USDT</div>
+      </div>
+
+      <div class="countdown">
+        <div class="cd-box">
+          <div class="cd-num" id="cd-days">0</div>
+          <div class="cd-label">Days</div>
+        </div>
+        <div class="cd-box">
+          <div class="cd-num" id="cd-hours">00</div>
+          <div class="cd-label">Hours</div>
+        </div>
+        <div class="cd-box">
+          <div class="cd-num" id="cd-mins">00</div>
+          <div class="cd-label">Minutes</div>
+        </div>
+        <div class="cd-box">
+          <div class="cd-num" id="cd-secs">00</div>
+          <div class="cd-label">Seconds</div>
+        </div>
+      </div>
+
+      <div class="list" id="list"></div>
+
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script>
+      const TOTAL = 60; // total ranked winners
+      const PER_PAGE = 10;
+      const PAGES = 6;
+      const TR_OFFSET = 3 * 60 * 60 * 1000; // Turkey = UTC+3 (no DST)
+
+      let entries = [];
+      let currentPage = 1;
+      let resetAt = nextResetTime();
+
+      // ---------- helpers ----------
+      function rand(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function randLetter() {
+        return String.fromCharCode(97 + Math.floor(Math.random() * 26));
+      }
+
+      function maskName() {
+        return randLetter() + randLetter() + "*****";
+      }
+
+      function prizeFor(rank) {
+        const map = { 1: 2000, 2: 1000, 3: 400, 4: 200, 5: 150, 6: 100, 7: 80, 8: 60, 9: 50, 10: 40 };
+        return map[rank] || 40;
+      }
+
+      function fmtPoints(n) {
+        return n.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+
+      function pad2(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      // ---------- data ----------
+      function generateEntries() {
+        const points = [];
+
+        // Top 3 — much higher, descending
+        let p = rand(60000, 70000);
+        for (let i = 0; i < 3; i++) {
+          points.push(p);
+          p -= rand(15000, 24000);
+        }
+
+        // The rest — descending with a floor
+        let q = rand(1700, 2000);
+        for (let i = 3; i < TOTAL; i++) {
+          points.push(q);
+          q -= rand(12, 45);
+          if (q < 300) q = rand(300, 520);
+        }
+
+        entries = points.map((pt, idx) => ({
+          rank: idx + 1,
+          name: maskName(),
+          points: Math.max(pt, 0),
+          prize: prizeFor(idx + 1),
+        }));
+      }
+
+      // ---------- render ----------
+      function rowHTML(e, isTop) {
+        return `
+          <div class="row${isTop ? " top" : ""}">
+            <div class="rank">#${e.rank}</div>
+            <div class="col-user">
+              <div class="cell-label">User</div>
+              <div class="cell-value">${e.name}</div>
+            </div>
+            <div class="col-points">
+              <div class="cell-label">Points</div>
+              <div class="cell-value">${fmtPoints(e.points)}</div>
+            </div>
+            <div class="col-prize">
+              <div class="cell-label">Prize</div>
+              <div class="cell-value">$${e.prize.toLocaleString("en-US")}</div>
+            </div>
+          </div>`;
+      }
+
+      function renderList() {
+        const list = document.getElementById("list");
+        let html = "";
+
+        // Top 3 podium — always pinned
+        for (let i = 0; i < 3; i++) html += rowHTML(entries[i], true);
+
+        // Current page slice, skipping the pinned top 3
+        const start = (currentPage - 1) * PER_PAGE;
+        const slice = entries.slice(start, start + PER_PAGE);
+        for (const e of slice) {
+          if (e.rank > 3) html += rowHTML(e, false);
+        }
+
+        list.innerHTML = html;
+      }
+
+      function renderPagination() {
+        const pag = document.getElementById("pagination");
+        let html = `<div class="page-btn arrow" data-go="prev">&lsaquo;</div>`;
+        for (let p = 1; p <= PAGES; p++) {
+          html += `<div class="page-btn${p === currentPage ? " active" : ""}" data-page="${p}">${p}</div>`;
+        }
+        html += `<div class="page-btn arrow" data-go="next">&rsaquo;</div>`;
+        pag.innerHTML = html;
+
+        pag.querySelectorAll(".page-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (btn.dataset.page) currentPage = Number(btn.dataset.page);
+            else if (btn.dataset.go === "prev") currentPage = Math.max(1, currentPage - 1);
+            else if (btn.dataset.go === "next") currentPage = Math.min(PAGES, currentPage + 1);
+            renderList();
+            renderPagination();
+          });
+        });
+      }
+
+      // ---------- countdown (resets daily at Turkey 00:00) ----------
+      function nextResetTime() {
+        const ist = new Date(Date.now() + TR_OFFSET);
+        const target = Date.UTC(
+          ist.getUTCFullYear(),
+          ist.getUTCMonth(),
+          ist.getUTCDate() + 1,
+          0, 0, 0, 0,
+        );
+        return target - TR_OFFSET;
+      }
+
+      function tick() {
+        let diff = resetAt - Date.now();
+
+        if (diff <= 0) {
+          // New day — regenerate the list and reset the timer
+          generateEntries();
+          currentPage = 1;
+          resetAt = nextResetTime();
+          diff = resetAt - Date.now();
+          renderList();
+          renderPagination();
+        }
+
+        const totalSec = Math.floor(diff / 1000);
+        document.getElementById("cd-days").textContent = Math.floor(totalSec / 86400);
+        document.getElementById("cd-hours").textContent = pad2(Math.floor(totalSec / 3600) % 24);
+        document.getElementById("cd-mins").textContent = pad2(Math.floor(totalSec / 60) % 60);
+        document.getElementById("cd-secs").textContent = pad2(totalSec % 60);
+      }
+
+      // ---------- init ----------
+      generateEntries();
+      renderList();
+      renderPagination();
+      tick();
+      setInterval(tick, 1000);
+    </script>
+  </body>
+</html>
