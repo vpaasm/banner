@@ -174,13 +174,11 @@
       .game-cell {
         display: flex;
         align-items: center;
-        align-self: stretch;
-        height: 100%;
       }
 
       .game-thumb {
-        height: 95%;
-        aspect-ratio: 1 / 1;
+        width: clamp(26px, 7vw, 34px);
+        height: clamp(26px, 7vw, 34px);
         border-radius: 8px;
         object-fit: cover;
         background: #0e1422;
