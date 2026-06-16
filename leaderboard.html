@@ -283,9 +283,9 @@
     </div>
 
     <script>
-      const TOTAL = 60; // total ranked winners
-      const PER_PAGE = 10;
+      const PER_PAGE = 9; // winners shown per page (below the top-3 podium)
       const PAGES = 6;
+      const TOTAL = 3 + PER_PAGE * PAGES; // 3 pinned podium + 6 pages of 9
       const TR_OFFSET = 3 * 60 * 60 * 1000; // Turkey = UTC+3 (no DST)
 
       let entries = [];
@@ -375,12 +375,11 @@
         // Top 3 podium — always pinned
         for (let i = 0; i < 3; i++) html += rowHTML(entries[i], true);
 
-        // Current page slice, skipping the pinned top 3
+        // Current page slice from the non-podium ranks (9 per page)
+        const listEntries = entries.slice(3);
         const start = (currentPage - 1) * PER_PAGE;
-        const slice = entries.slice(start, start + PER_PAGE);
-        for (const e of slice) {
-          if (e.rank > 3) html += rowHTML(e, false);
-        }
+        const slice = listEntries.slice(start, start + PER_PAGE);
+        for (const e of slice) html += rowHTML(e, false);
 
         list.innerHTML = html;
       }
