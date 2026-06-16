@@ -138,14 +138,18 @@
         min-height: 0;
         position: relative;
         z-index: 1;
+        display: flex;
+        flex-direction: column;
       }
 
       .win-row {
+        flex: 1 1 0;
+        min-height: 0;
         display: grid;
         grid-template-columns: var(--cols);
         align-items: center;
         gap: clamp(6px, 1.6vw, 12px);
-        padding: clamp(8px, 2vw, 11px) clamp(10px, 3vw, 16px);
+        padding: 0 clamp(10px, 3vw, 16px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         animation: slideIn 0.5s ease;
       }
@@ -177,8 +181,8 @@
       }
 
       .game-thumb {
-        width: clamp(24px, 6vw, 30px);
-        height: clamp(32px, 8vw, 40px);
+        width: clamp(22px, 5vw, 28px);
+        height: clamp(30px, 7vw, 36px);
         border-radius: 8px;
         object-fit: cover;
         background: #0e1422;
@@ -263,7 +267,7 @@
       const CURRENCY = "₺";
       const MIN_DELAY = 800;
       const MAX_DELAY = 1500;
-      const INITIAL_ROWS = 38;
+      const INITIAL_ROWS = 10;
 
       // Grid columns shared by header + rows
       document.documentElement.style.setProperty(
@@ -373,16 +377,12 @@
         const list = document.getElementById("feed-list");
         list.innerHTML = "";
 
+        // Always exactly 10 rows; they flex to fill the height
         for (let i = 0; i < INITIAL_ROWS; i++) {
           list.appendChild(createRowElement(generateRandomBet(), false));
         }
 
-        let safety = 60;
-        while (list.scrollHeight < list.clientHeight - 4 && safety-- > 0) {
-          list.appendChild(createRowElement(generateRandomBet(), false));
-        }
-
-        MAX_ROWS = list.children.length;
+        MAX_ROWS = INITIAL_ROWS;
       }
 
       function addBet(b) {
