@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Live Wins Feed</title>
+    <title>Latest Bets Feed</title>
     <style>
       * {
         box-sizing: border-box;
@@ -29,16 +29,11 @@
         background:
           radial-gradient(
             ellipse at top,
-            rgba(230, 212, 160, 0.12) 0%,
+            rgba(230, 212, 160, 0.1) 0%,
             transparent 65%
           ),
-          radial-gradient(
-            circle at bottom right,
-            rgba(74, 222, 128, 0.05) 0%,
-            transparent 50%
-          ),
-          #11142a;
-        border: 1px solid rgba(230, 212, 160, 0.3);
+          #050b2e;
+        border: 1px solid #d8a65f;
         border-radius: 12px;
         overflow: hidden;
         width: 100%;
@@ -46,109 +41,58 @@
         display: flex;
         flex-direction: column;
         box-shadow:
-          inset 0 1px 0 rgba(230, 212, 160, 0.15),
-          0 0 24px rgba(230, 212, 160, 0.06);
+          inset 0 1px 0 rgba(230, 212, 160, 0.12),
+          0 0 24px rgba(0, 0, 0, 0.25);
       }
 
-      .feed::before,
-      .feed::after {
-        content: "";
-        position: absolute;
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: radial-gradient(
-          circle,
-          rgba(230, 212, 160, 0.18) 0%,
-          transparent 70%
-        );
-        pointer-events: none;
-        animation: sparkle 4s ease-in-out infinite;
-      }
-      .feed::before {
-        top: -30px;
-        left: -30px;
-      }
-      .feed::after {
-        top: -30px;
-        right: -30px;
-        animation-delay: 2s;
-      }
-
-      @keyframes sparkle {
-        0%,
-        100% {
-          opacity: 0.4;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.8;
-          transform: scale(1.15);
-        }
-      }
-
+      /* ---------- Header ---------- */
       .feed-header {
         flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: clamp(6px, 1.4vw, 9px) clamp(10px, 3vw, 16px);
-        background: linear-gradient(
-          90deg,
-          #1a1f3a 0%,
-          #0a0d1f 50%,
-          #1a1f3a 100%
-        );
-        border-bottom: 1px solid rgba(230, 212, 160, 0.3);
+        gap: 12px;
+        padding: clamp(8px, 1.6vw, 12px) clamp(10px, 3vw, 16px);
+        background: #161d2f;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         position: relative;
         z-index: 2;
       }
 
       .feed-title {
+        font-size: clamp(13px, 3vw, 16px);
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      /* Live / (Top 10) toggle pill — Live only, kept active */
+      .toggle {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: clamp(11px, 2.5vw, 13px);
-        font-weight: 700;
-        letter-spacing: 1.5px;
-        color: #e6d4a0;
-        text-transform: uppercase;
-        text-shadow: 0 0 8px rgba(230, 212, 160, 0.4);
+        background: #0e1422;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 999px;
+        padding: 3px;
       }
 
-      .crown-icon {
-        width: 18px;
-        height: 18px;
-        color: #e6d4a0;
-        fill: #e6d4a0;
-        filter: drop-shadow(0 0 6px rgba(230, 212, 160, 0.7));
-        animation: glow 2.5s ease-in-out infinite;
-        flex-shrink: 0;
-      }
-
-      @keyframes glow {
-        0%,
-        100% {
-          filter: drop-shadow(0 0 4px rgba(230, 212, 160, 0.5));
-        }
-        50% {
-          filter: drop-shadow(0 0 10px rgba(230, 212, 160, 0.9));
-        }
-      }
-
-      .live-indicator {
+      .toggle-btn {
         display: flex;
         align-items: center;
         gap: 6px;
-        font-size: clamp(9px, 2vw, 10px);
-        font-weight: 700;
-        letter-spacing: 1px;
+        font-size: clamp(11px, 2.4vw, 13px);
+        font-weight: 600;
         color: #fff;
+        background: #2a3350;
+        border-radius: 999px;
+        padding: clamp(5px, 1.2vw, 7px) clamp(14px, 4vw, 24px);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
       }
 
       .live-dot {
-        width: 8px;
-        height: 8px;
+        width: 7px;
+        height: 7px;
         background: #ff3b3b;
         border-radius: 50%;
         box-shadow: 0 0 8px #ff3b3b;
@@ -167,6 +111,27 @@
         }
       }
 
+      /* ---------- Column titles ---------- */
+      .col-head {
+        display: grid;
+        grid-template-columns: var(--cols);
+        align-items: center;
+        gap: clamp(6px, 1.6vw, 12px);
+        padding: clamp(6px, 1.4vw, 9px) clamp(10px, 3vw, 16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: clamp(9px, 2vw, 11px);
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        color: #6f7894;
+        text-transform: capitalize;
+        flex-shrink: 0;
+      }
+
+      .col-head .right {
+        text-align: right;
+      }
+
+      /* ---------- Rows ---------- */
       .feed-list {
         flex: 1;
         overflow: hidden;
@@ -177,12 +142,16 @@
 
       .win-row {
         display: grid;
-        grid-template-columns: 1fr 1fr auto;
+        grid-template-columns: var(--cols);
         align-items: center;
-        gap: clamp(8px, 2vw, 12px);
-        padding: clamp(4px, 1.2vw, 6px) clamp(10px, 3vw, 16px);
+        gap: clamp(6px, 1.6vw, 12px);
+        padding: clamp(5px, 1.3vw, 7px) clamp(10px, 3vw, 16px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         animation: slideIn 0.5s ease;
+      }
+
+      .win-row.win {
+        background: rgba(74, 222, 128, 0.05);
       }
 
       .win-row:last-child {
@@ -198,41 +167,71 @@
         to {
           opacity: 1;
           transform: translateY(0);
-          background: transparent;
         }
       }
 
-      .username {
-        font-size: clamp(11px, 2.5vw, 12px);
-        font-weight: 600;
-        color: #fff;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      /* Game thumbnail — small + rounded corners */
+      .game-cell {
+        display: flex;
+        align-items: center;
       }
 
-      .game {
-        font-size: clamp(10px, 2vw, 11px);
-        color: #8a8fad;
+      .game-thumb {
+        width: clamp(26px, 7vw, 34px);
+        height: clamp(26px, 7vw, 34px);
+        border-radius: 8px;
+        object-fit: cover;
+        background: #0e1422;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        flex-shrink: 0;
+      }
+
+      .player {
+        font-size: clamp(11px, 2.5vw, 13px);
+        font-weight: 600;
+        color: #d8a65f;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
       .amount {
-        font-size: clamp(12px, 3.2vw, 12px);
+        font-size: clamp(11px, 2.5vw, 13px);
         font-weight: 600;
-        color: #4ade80;
+        color: #e8ebf5;
         white-space: nowrap;
-        text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
       }
 
-      @media (max-width: 380px) {
+      .multiplier {
+        font-size: clamp(11px, 2.5vw, 13px);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .multiplier.win {
+        color: #4ade80;
+      }
+      .multiplier.loss {
+        color: #ff5b5b;
+      }
+
+      .winnings {
+        font-size: clamp(11px, 2.5vw, 13px);
+        font-weight: 700;
+        white-space: nowrap;
+        text-align: right;
+      }
+      .winnings.win {
+        color: #4ade80;
+        text-shadow: 0 0 10px rgba(74, 222, 128, 0.35);
+      }
+      .winnings.loss {
+        color: #58607a;
+      }
+
+      @media (max-width: 360px) {
+        .col-head,
         .win-row {
-          grid-template-columns: 1fr auto;
-        }
-        .game {
-          display: none;
+          --cols: auto 1fr 1fr 0.8fr 1fr;
         }
       }
     </style>
@@ -240,21 +239,23 @@
   <body>
     <div class="feed">
       <div class="feed-header">
-        <div class="feed-title">
-          <svg
-            class="crown-icon"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm0 2h14v2H5v-2z" />
-          </svg>
-          Live Wins
-        </div>
-        <div class="live-indicator">
-          <div class="live-dot"></div>
-          <span>LIVE</span>
+        <div class="feed-title">Latest Bets</div>
+        <div class="toggle">
+          <div class="toggle-btn">
+            <span class="live-dot"></span>
+            <span>Live</span>
+          </div>
         </div>
       </div>
+
+      <div class="col-head">
+        <span>Game</span>
+        <span>Player</span>
+        <span>Bet Amount</span>
+        <span>Multiplier</span>
+        <span class="right">Winnings</span>
+      </div>
+
       <div class="feed-list" id="feed-list"></div>
     </div>
 
@@ -262,97 +263,109 @@
       const CURRENCY = "₺";
       const MIN_DELAY = 800;
       const MAX_DELAY = 1500;
-      const MIN_WIN = 5000;
-      const MAX_WIN = 60000;
       const INITIAL_ROWS = 38;
+
+      // Grid columns shared by header + rows
+      document.documentElement.style.setProperty(
+        "--cols",
+        "auto 1fr 1.1fr 1fr 1.2fr",
+      );
 
       let MAX_ROWS = INITIAL_ROWS;
 
       const sampleUsernames = [
-        "Maximus",
-        "AceHigh",
-        "LuckyBet",
-        "BetKing",
-        "SpinMaster",
-        "CryptoWolf",
-        "BigWin",
-        "JackpotMan",
-        "SlotPro",
-        "CardShark",
-        "TornadoBet",
-        "GoldRush",
-        "DragonPlay",
-        "PhoenixRise",
-        "StarPlayer",
-        "NightOwl",
-        "ThunderBet",
-        "CashKing",
-        "QuickSpin",
-        "RoyalFlush",
-        "IronBet",
-        "SilverFox",
-        "BlackJack",
-        "RedSeven",
-        "WildCard",
-        "TopBet",
-        "FireSpin",
-        "DiamondKing",
-        "AcePlayer",
-        "MoonShot",
+        "Maximus", "AceHigh", "LuckyBet", "BetKing", "SpinMaster",
+        "Kerem", "BigWin", "JackpotMan", "SlotPro", "CardShark",
+        "Tornado", "GoldRush", "DragonPlay", "Phoenix", "StarPlayer",
+        "NightOwl", "Thunder", "CashKing", "QuickSpin", "RoyalFlush",
+        "Iron", "SilverFox", "BlackJack", "RedSeven", "WildCard",
+        "TopBet", "FireSpin", "Diamond", "AcePlayer", "MoonShot",
+        "Emir", "Burak", "Deniz", "Polat", "Sertac", "Cenk",
       ];
 
+      // Each game maps to a thumbnail image in the folder
       const sampleGames = [
-        "Sweet Bonanza",
-        "Sugar Rush",
-        "Gates of Olympus",
-        "The Dog House",
-        "Starlight Princess",
-        "Shining Crown",
-        "Burning Hot",
-        "40 Super Hot",
-        "Big Bass Bonanza",
-        "Wolf Gold",
-        "Book of Dead",
-        "Aviator",
-        "Mines",
-        "Plinko",
-        "Crazy Time",
-        "Lightning Roulette",
+        { name: "Sweet Bonanza", img: "sweet bom.webp" },
+        { name: "Sugar Rush", img: "sugar rush.webp" },
+        { name: "Sugar Rush 1000", img: "sugar rush 2.webp" },
+        { name: "Gates of Olympus", img: "gates of.webp" },
+        { name: "The Dog House", img: "dog house.webp" },
+        { name: "Starlight Princess", img: "princess.webp" },
+        { name: "Shining Crown", img: "shining crown.webp" },
+        { name: "Burning Hot", img: "burninghot.webp" },
+        { name: "40 Super Hot", img: "40superhot.webp" },
+        { name: "Wild West Gold", img: "wild west gold.webp" },
+        { name: "Buffalo King", img: "bufflo.webp" },
+        { name: "Big Bass Bonanza", img: "bigbassbonanza.webp" },
+        { name: "Big Bass Megaways", img: "bigbassbonnaza megaways.webp" },
       ];
 
-      function maskUsername(name) {
-        if (name.length <= 2) return name;
-        return name.slice(0, 2) + "******";
+      // Realistic Turkish Lira bet sizes
+      const betAmounts = [
+        0.2, 0.4, 1, 2.5, 5, 10, 20, 50, 100, 150, 200, 300, 500, 600, 700,
+      ];
+
+      function fmt(n) {
+        return n.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
       }
 
-      function generateRandomWin() {
+      function maskUsername(name) {
+        return name.slice(0, 2) + "*****";
+      }
+
+      function generateRandomBet() {
         const name =
           sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
         const game =
           sampleGames[Math.floor(Math.random() * sampleGames.length)];
-        const amount = (
-          Math.random() * (MAX_WIN - MIN_WIN) +
-          MIN_WIN
-        ).toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
+        const bet = betAmounts[Math.floor(Math.random() * betAmounts.length)];
+
+        // ~55% of spins return nothing (loss)
+        let multiplier;
+        if (Math.random() < 0.55) {
+          multiplier = 0;
+        } else {
+          // weighted toward small multipliers, occasional big hit
+          const r = Math.random();
+          if (r < 0.6) multiplier = 0.2 + Math.random() * 2; // 0.2x–2.2x
+          else if (r < 0.9) multiplier = 2 + Math.random() * 8; // 2x–10x
+          else multiplier = 10 + Math.random() * 90; // 10x–100x
+        }
+
+        const winnings = bet * multiplier;
         return {
-          username: maskUsername(name),
-          game: game,
-          amount: amount,
+          player: maskUsername(name),
+          game,
+          bet,
+          multiplier,
+          winnings,
+          isWin: multiplier > 0,
         };
       }
 
-      function createRowElement(win, animate = true) {
+      function createRowElement(b, animate = true) {
         const row = document.createElement("div");
-        row.className = "win-row";
+        row.className = "win-row" + (b.isWin ? " win" : "");
         if (!animate) row.style.animation = "none";
+
+        const multClass = b.isWin ? "win" : "loss";
+        const winClass = b.isWin ? "win" : "loss";
+        const winText = b.isWin
+          ? "+" + CURRENCY + fmt(b.winnings)
+          : CURRENCY + "0.00";
+
         row.innerHTML = `
-      <div class="username">${win.username}</div>
-      <div class="game">${win.game}</div>
-      <div class="amount">${CURRENCY}${win.amount}</div>
-    `;
+          <div class="game-cell">
+            <img class="game-thumb" src="${encodeURI(b.game.img)}" alt="${b.game.name}" loading="lazy" />
+          </div>
+          <div class="player">${b.player}</div>
+          <div class="amount">${CURRENCY}${fmt(b.bet)}</div>
+          <div class="multiplier ${multClass}">${b.multiplier.toFixed(2)}x</div>
+          <div class="winnings ${winClass}">${winText}</div>
+        `;
         return row;
       }
 
@@ -360,39 +373,37 @@
         const list = document.getElementById("feed-list");
         list.innerHTML = "";
 
-        // Preload 30 random wins
         for (let i = 0; i < INITIAL_ROWS; i++) {
-          list.appendChild(createRowElement(generateRandomWin(), false));
+          list.appendChild(createRowElement(generateRandomBet(), false));
         }
 
-        // If the screen is even taller and there's still empty space, keep adding
         let safety = 60;
         while (list.scrollHeight < list.clientHeight - 4 && safety-- > 0) {
-          list.appendChild(createRowElement(generateRandomWin(), false));
+          list.appendChild(createRowElement(generateRandomBet(), false));
         }
 
         MAX_ROWS = list.children.length;
       }
 
-      function addWin(win) {
+      function addBet(b) {
         const list = document.getElementById("feed-list");
-        list.prepend(createRowElement(win, true));
+        list.prepend(createRowElement(b, true));
         while (list.children.length > MAX_ROWS) {
           list.removeChild(list.lastChild);
         }
       }
 
-      function scheduleNextWin() {
+      function scheduleNextBet() {
         const delay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
         setTimeout(() => {
-          addWin(generateRandomWin());
-          scheduleNextWin();
+          addBet(generateRandomBet());
+          scheduleNextBet();
         }, delay);
       }
 
       window.addEventListener("load", () => {
         initialFill();
-        scheduleNextWin();
+        scheduleNextBet();
       });
 
       let resizeTimeout;
