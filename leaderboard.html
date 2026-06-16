@@ -283,9 +283,9 @@
     </div>
 
     <script>
-      const PER_PAGE = 9; // winners shown per page (below the top-3 podium)
+      const PER_PAGE = 6; // list rows below the podium (3 podium + 6 = 9 per page)
       const PAGES = 6;
-      const TOTAL = 3 + PER_PAGE * PAGES; // 3 pinned podium + 6 pages of 9
+      const TOTAL = 3 + PER_PAGE * PAGES; // 3 pinned podium + 6 pages of 6
       const TR_OFFSET = 3 * 60 * 60 * 1000; // Turkey = UTC+3 (no DST)
 
       let entries = [];
