@@ -304,9 +304,12 @@
         { name: "Big Bass Megaways", img: "bigbassbonnaza megaways.webp" },
       ];
 
-      // Realistic USD bet sizes
-      const commonBets = [0.2, 0.4, 1, 2.5, 5, 10, 20, 40, 60, 100];
-      const highBets = [150, 200, 300, 500]; // >$100, shown rarely
+      // Realistic USD bet sizes — varied, non-round amounts
+      const commonBets = [
+        0.2, 0.3, 0.5, 0.7, 0.9, 1.2, 1.7, 2.5, 3.3, 4.4, 5.5, 7.5, 8.8,
+        10.9, 12.5, 15.0, 18.7, 22.4, 27.5, 33.3, 44.0, 55.5, 67.8, 80.0, 99.9,
+      ];
+      const highBets = [125.5, 150.0, 175.7, 222.2, 300.0, 444.4, 500.0]; // >$100, shown rarely
 
       function fmt(n) {
         return n.toLocaleString("en-US", {
