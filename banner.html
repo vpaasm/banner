@@ -304,10 +304,9 @@
         { name: "Big Bass Megaways", img: "bigbassbonnaza megaways.webp" },
       ];
 
-      // Realistic USD bet sizes (high bets kept rare)
-      const betAmounts = [
-        0.2, 0.4, 1, 2.5, 5, 10, 20, 40, 60, 100, 150, 200, 300, 500,
-      ];
+      // Realistic USD bet sizes
+      const commonBets = [0.2, 0.4, 1, 2.5, 5, 10, 20, 40, 60, 100];
+      const highBets = [150, 200, 300, 500]; // >$100, shown rarely
 
       function fmt(n) {
         return n.toLocaleString("en-US", {
@@ -325,7 +324,9 @@
           sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
         const game =
           sampleGames[Math.floor(Math.random() * sampleGames.length)];
-        const bet = betAmounts[Math.floor(Math.random() * betAmounts.length)];
+        // ~12% of bets are high (>$100), the rest are common (<=$100)
+        const pool = Math.random() < 0.12 ? highBets : commonBets;
+        const bet = pool[Math.floor(Math.random() * pool.length)];
 
         // ~25% of spins return nothing (loss)
         let multiplier;
