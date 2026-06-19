@@ -1,0 +1,266 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: transparent;
+  color: #fff;
+}
+
+.board {
+  position: relative;
+  background:
+    radial-gradient(ellipse at top, rgba(216, 166, 95, 0.1) 0%, transparent 60%),
+    #050b2e;
+  border: 1px solid #d8a65f;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    inset 0 1px 0 rgba(216, 166, 95, 0.12),
+    0 0 24px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Header ---------- */
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: clamp(8px, 1.7vw, 12px) clamp(12px, 3vw, 18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.board-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: clamp(12px, 2.8vw, 15px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #d8a65f;
+  text-transform: uppercase;
+}
+
+.board-title svg {
+  width: 14px;
+  height: 14px;
+  stroke: #d8a65f;
+  opacity: 0.7;
+}
+
+.daily-pill {
+  font-size: clamp(11px, 2.4vw, 13px);
+  font-weight: 600;
+  color: #d8a65f;
+  background: rgba(216, 166, 95, 0.08);
+  border: 1px solid #d8a65f;
+  border-radius: 999px;
+  padding: clamp(4px, 1vw, 6px) clamp(12px, 3vw, 18px);
+}
+
+/* ---------- Prizepool ---------- */
+.prizepool {
+  text-align: center;
+  padding: clamp(11px, 2.4vw, 17px) 0 clamp(6px, 1.6vw, 10px);
+}
+
+.prizepool .label {
+  font-size: clamp(10px, 2.2vw, 12px);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #8a8fad;
+  margin-bottom: 6px;
+}
+
+.prizepool .amount {
+  font-size: clamp(26px, 7vw, 38px);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #d8a65f;
+  text-shadow: 0 0 18px rgba(216, 166, 95, 0.35);
+}
+
+/* ---------- Countdown ---------- */
+.countdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(6px, 1.6vw, 10px);
+  padding: clamp(6px, 1.6vw, 10px) clamp(12px, 3vw, 18px) clamp(11px, 2.4vw, 16px);
+}
+
+.cd-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(216, 166, 95, 0.25);
+  border-radius: 10px;
+  padding: clamp(6px, 1.6vw, 11px) 4px;
+  text-align: center;
+}
+
+.cd-num {
+  font-size: clamp(20px, 5.5vw, 30px);
+  font-weight: 800;
+  color: #d8a65f;
+  line-height: 1;
+  text-shadow: 0 0 12px rgba(216, 166, 95, 0.3);
+}
+
+.cd-label {
+  margin-top: 6px;
+  font-size: clamp(9px, 2vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #8a8fad;
+}
+
+/* ---------- List ---------- */
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0 clamp(8px, 2vw, 12px);
+}
+
+.row {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: clamp(28px, 7vw, 46px) 1fr 1.2fr auto;
+  align-items: center;
+  gap: clamp(4px, 1.4vw, 12px);
+  padding: 0 clamp(5px, 1.3vw, 10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Let grid cells shrink so nowrap numbers never push past the edge */
+.row > div {
+  min-width: 0;
+}
+
+.row.top {
+  background: rgba(216, 166, 95, 0.08);
+  border-radius: 8px;
+  border-bottom: 1px solid rgba(216, 166, 95, 0.18);
+  margin-bottom: 2px;
+}
+
+.rank {
+  font-size: clamp(13px, 3vw, 17px);
+  font-weight: 800;
+  color: #fff;
+}
+.row.top .rank {
+  color: #d8a65f;
+  text-shadow: 0 0 10px rgba(216, 166, 95, 0.4);
+}
+
+.cell-label {
+  font-size: clamp(8px, 1.8vw, 10px);
+  font-weight: 500;
+  color: #6f7894;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-value {
+  font-size: clamp(10px, 2.4vw, 13px);
+  font-weight: 700;
+  color: #e8ebf5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-user .cell-value {
+  color: #d8a65f;
+}
+
+.col-prize {
+  text-align: right;
+}
+.col-prize .cell-label {
+  text-align: right;
+}
+.col-prize .cell-value {
+  color: #4ade80;
+}
+
+/* ---------- Pagination ---------- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1.4vw, 8px);
+  padding: clamp(9px, 2.2vw, 14px);
+}
+
+.page-btn {
+  min-width: clamp(26px, 7vw, 32px);
+  height: clamp(26px, 7vw, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(11px, 2.4vw, 13px);
+  font-weight: 600;
+  color: #c7cce0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.page-btn:hover {
+  border-color: rgba(216, 166, 95, 0.5);
+  color: #fff;
+}
+
+.page-btn.active {
+  background: rgba(216, 166, 95, 0.12);
+  border-color: #d8a65f;
+  color: #d8a65f;
+}
+
+.page-btn.arrow {
+  font-size: clamp(13px, 3vw, 16px);
+}
+
+/* Narrow phones: shrink so numbers fit on one line without clipping */
+@media (max-width: 430px) {
+  .cell-value {
+    font-size: 11px;
+  }
+  .cell-label {
+    font-size: 8px;
+  }
+  .rank {
+    font-size: 13px;
+  }
+  .row {
+    gap: 5px;
+    padding: 0 5px;
+  }
+}
+
+@media (max-width: 360px) {
+  .cell-value {
+    font-size: 10px;
+  }
+}
